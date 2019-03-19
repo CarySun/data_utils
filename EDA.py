@@ -1,50 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-@Date: 2019-01-29 20:10:29
+@Date: 2019-03-19 09:33:01
 @author: CarySun
 """
-
-import numpy as np
 import pandas as pd
-import seaborn as sn
+import numpy as np
 
 
-def corr_filter(dataset, r=1.0, headmap=False):
-	"""
-    Feature selection. Through correlation matrix, find out the variables whose correlation exceeds r.
-    Parameters
-    ----------
-    0712
-    dataset : pandas.Dataset
-    r : sequence of percentile values
-        percentile or percentiles to find score at
-    axis : float
-        correlation coefficient
-    Returns
-    -------
-    corr_feature: list
-       	list of tuples, each tuple contains two related features
-        pandas can transformate it to dataframe
- 	"""
-    corr_mat_bool = ~(dataset.corr() > r)
-
-    if headmap:
-
-        sn.heatmap(corr_filter)
-
-    mask = np.triu(np.ones(corr_mat_bool.shape, dtype=bool))
-
-    corr_mat_bool = corr_mat_bool + mask
-
-    corr_feature = []
-    for indexs in corr_mat_bool.index:
-        for i in range(len(corr_mat_bool.loc[indexs].values)):
-            if (corr_mat_bool.loc[indexs].values[i] == False):
-                corr_feature.append((indexs, corr_mat_bool.index[i]))
-
-    return corr_feature
-
-    def nullity_sort(df, sort=None):
+def nullity_sort(df, sort=None):
     """
     Sorts a DataFrame according to its nullity, in either ascending or descending order.
 
@@ -87,3 +50,38 @@ def nullity_filter(df, filter=None, p=0, n=0):
         if n:
             df = df.iloc[:, np.sort(np.argsort(df.count(axis='rows').values)[:n])]
     return df
+
+def df_summary(df, mode='all', show_num=5):
+    df = df.copy()
+
+    if mode in  ('all', 'base'):  # if mode ==  'base' or mode == 'all':
+        print('{:*^60}'.format('Data overview'), '\n')
+        print('Sample: {0}\tFeature numbers: {1}'.format(df.shape[0], (df.shape[1] - 1)), '\n')
+        print('{:-^60}'.format('Glancing at Sample'))
+        print(df.head(show_num))
+        print('\n', '{:-^60}'.format('Describe'))
+        print(df.describe().T)
+        print('\n', '{:-^60}'.format('Data type'))
+        print(df.dtypes)
+        print('-' * 60)
+
+    if mode in ('all', 'nan'):
+        na_cols = df.isnull().sum(axis=0)
+        print('{:*^60}'.format('NaN overview'), '\n')        
+        print('NaN Feature:')
+        print(na_cols[na_cols!=0].sort_values(ascending=False))
+        print('-' * 30)
+        print('valid records for each Cols:')
+        print(df.count())
+        print('-' * 30)    
+        na_lines = df.isnull().any(axis=1)
+        print('Total number of NA lines is: {0}'.format(na_lines.sum()))
+        print('-' * 30)
+
+    return 0
+
+
+if __name__=='__main__':
+    df = pd.read_csv('finviz.csv')
+    df_summary(df, 'nan')
+    
