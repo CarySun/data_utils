@@ -3,12 +3,13 @@
 @Date: 2019-03-19 09:33:01
 @author: CarySun
 """
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.impute import SimpleImputer
-#from utils import nan_vis
+from .utils import nan_vis
 
 
 
@@ -80,20 +81,20 @@ def convert_type(df, convert_dic=None):
         df[var] = df[var].astype(type)
           
     print ('Data Dtypes')
-    print (df.dtypes) 
- 
-        
+    print (df.dtypes)
+    return 0
+
 
 if __name__=='__main__':
     var_lists = {'EPS (ttm)': 'int32'
-    } # 字典：定义要转换的列及其数据类型
+    } 
     df = pd.read_csv('finviz.csv')
     #df_summary(df, 'all',labels='Country')
-    
+    #corr_filter(df)
     #convert_type(df, var_lists)
-    #print(replace_nan(df,ignore_object=False))
-    replace_nan(df,ignore_object=False).to_csv('aaa.csv')
+    print(replace_nan(df,ignore_object=False))
+    #replace_nan(df,ignore_object=False).to_csv('aaa.csv')
 
-    
+
 
     
